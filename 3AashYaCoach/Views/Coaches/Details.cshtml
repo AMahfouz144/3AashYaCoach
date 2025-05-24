@@ -1,0 +1,37 @@
+﻿@model _3AashYaCoach.Models.Coach
+
+@{
+    ViewData["Title"] = "Coach Details";
+}
+
+<h2 class="mb-4">👤 Coach Profile</h2>
+
+<div class="card shadow border-0">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Full Name</dt>
+            <dd class="col-sm-9">@Model.User.FullName</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.User.Email</dd>
+
+            <dt class="col-sm-3">Role</dt>
+            <dd class="col-sm-9">@Model.User.Role</dd>
+
+            <dt class="col-sm-3">Certificates</dt>
+            <dd class="col-sm-9">@Model.Certificates</dd>
+
+            <dt class="col-sm-3">Experience Details</dt>
+            <dd class="col-sm-9">@Model.ExperienceDetails</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-warning">
+        <i class="bi bi-pencil-square"></i> Edit
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>

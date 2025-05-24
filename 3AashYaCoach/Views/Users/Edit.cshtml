@@ -1,0 +1,55 @@
+﻿@using _3AashYaCoach.Models.Enums
+@model _3AashYaCoach.Models.User
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<h2 class="mb-4">✏️ Edit User</h2>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label fw-bold"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-bold"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- كلمة المرور إما تشيلها أو تخليها اختيارية -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Change Password</label>
+                <input name="NewPassword" class="form-control" type="password" placeholder="Leave blank to keep current" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Role" class="form-label fw-bold"></label>
+                <select asp-for="Role" class="form-select" asp-items="Html.GetEnumSelectList<UserRole>()"></select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Changes
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

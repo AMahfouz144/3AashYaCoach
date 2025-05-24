@@ -1,0 +1,80 @@
+﻿@using _3AashYaCoach.ViewModel
+@model CreateCoachViewModel
+
+@{
+    ViewData["Title"] = "Create New Coach";
+}
+
+<h2>Create New Coach</h2>
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Certificates" class="form-label"></label>
+        <input asp-for="Certificates" class="form-control" />
+        <span asp-validation-for="Certificates" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ExperienceDetails" class="form-label"></label>
+        <textarea asp-for="ExperienceDetails" class="form-control"></textarea>
+        <span asp-validation-for="ExperienceDetails" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Upload Profile Picture</label>
+        <input type="file" name="ProfileImage" class="form-control" accept="image/*" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Create</button>
+</form>
+
+
+@* <form asp-action="Create" method="post"> *@
+@*     <div class="mb-3"> *@
+@*         <label asp-for="FullName" class="form-label"></label> *@
+@*         <input asp-for="FullName" class="form-control" /> *@
+@*         <span asp-validation-for="FullName" class="text-danger"></span> *@
+@*     </div> *@
+@*     <div class="mb-3"> *@
+@*         <label asp-for="Email" class="form-label"></label> *@
+@*         <input asp-for="Email" class="form-control" /> *@
+@*         <span asp-validation-for="Email" class="text-danger"></span> *@
+@*     </div> *@
+@*     <div class="mb-3"> *@
+@*         <label asp-for="Password" class="form-label"></label> *@
+@*         <input asp-for="Password" type="password" class="form-control" /> *@
+@*         <span asp-validation-for="Password" class="text-danger"></span> *@
+@*     </div> *@
+@*     <div class="mb-3"> *@
+@*         <label asp-for="Certificates" class="form-label"></label> *@
+@*         <input asp-for="Certificates" class="form-control" /> *@
+@*         <span asp-validation-for="Certificates" class="text-danger"></span> *@
+@*     </div> *@
+@*     <div class="mb-3"> *@
+@*         <label asp-for="ExperienceDetails" class="form-label"></label> *@
+@*         <textarea asp-for="ExperienceDetails" class="form-control"></textarea> *@
+@*         <span asp-validation-for="ExperienceDetails" class="text-danger"></span> *@
+@*     </div> *@
+@*     <div class="mb-3"> *@
+@*         <label class="form-label fw-bold">Upload Profile Picture</label> *@
+@*         <input type="file" name="ProfileImage" class="form-control" /> *@
+@*     </div> *@
+
+@*     <button type="submit" class="btn btn-success">Create</button> *@
+@* </form> *@
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

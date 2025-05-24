@@ -1,0 +1,31 @@
+﻿@model _3AashYaCoach.Models.User
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<h2 class="mb-4">👤 User Details</h2>
+
+<div class="card shadow border-0">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3 fw-bold">Full Name</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+
+            <dt class="col-sm-3 fw-bold">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3 fw-bold">Role</dt>
+            <dd class="col-sm-9">@Model.Role</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+        <i class="bi bi-pencil-square"></i> Edit
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Back to List
+    </a>
+</div>
