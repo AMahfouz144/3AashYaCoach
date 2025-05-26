@@ -3,8 +3,9 @@
     public class CreatePlanHeaderDto
     {
         public Guid CoachId { get; set; }
-        public Guid TraineeId { get; set; }
-        public string Title { get; set; }
-        public string? Description { get; set; }
+        //public Guid? TraineeId { get; set; }
+        public string PlanName { get; set; }
+        public string PrimaryGoal { get; set; }
+        public bool IsPublic { get; set; } = true;
     }
 }

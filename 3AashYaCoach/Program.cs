@@ -1,4 +1,6 @@
 ﻿using _3AashYaCoach._3ash_ya_coach.Services;
+using _3AashYaCoach._3ash_ya_coach.Services.PlanSubscriptionService;
+using _3AashYaCoach._3ash_ya_coach.Services.SavedCoachService;
 using _3AashYaCoach._3ash_ya_coach.Shared;
 using _3AashYaCoach.Models.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,8 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-//options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
 
 
 builder.Services.AddControllersWithViews();  
@@ -60,13 +62,13 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
-
+builder.Services.AddScoped<ISavedCoachService, SavedCoachService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowAnyOrigin();
@@ -82,13 +84,13 @@ builder.Services.AddSignalR()
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 builder.Services.AddScoped<IChatService, ChatService>();
-
+builder.Services.AddScoped<IPlanSubscriptionService, PlanSubscriptionService>();
 var app = builder.Build();
 
 
 app.UseStaticFiles();
-//if (app.Environment.IsProduction())
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsProduction())
+//if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

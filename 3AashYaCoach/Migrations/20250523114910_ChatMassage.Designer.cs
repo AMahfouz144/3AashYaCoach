@@ -169,10 +169,10 @@ namespace _3AashYaCoach.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("PrimaryGoal")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("PlanName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

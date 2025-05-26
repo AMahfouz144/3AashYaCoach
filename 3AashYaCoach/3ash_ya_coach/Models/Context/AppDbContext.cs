@@ -13,6 +13,7 @@ namespace _3AashYaCoach.Models.Context
         public DbSet<WorkoutDay> WorkoutDays { get; set; }
         public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<PlanSubscription> PlanSubscriptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -166,21 +166,19 @@ namespace _3AashYaCoach.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("PlanName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TraineeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PrimaryGoal")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CoachId");
-
-                    b.HasIndex("TraineeId");
 
                     b.ToTable("WorkoutPlans");
                 });
@@ -213,6 +211,30 @@ namespace _3AashYaCoach.Migrations
                     b.ToTable("ChatMessages");
                 });
 
+            modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.PlanSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("SubscribedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TraineeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkoutPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TraineeId");
+
+                    b.HasIndex("WorkoutPlanId");
+
+                    b.ToTable("PlanSubscriptions");
+                });
+
             modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.WorkoutExercise", b =>
                 {
                     b.Property<Guid>("Id")
@@ -226,14 +248,16 @@ namespace _3AashYaCoach.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Reps")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Sets")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("WorkoutDayId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("difficulty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("muscleGroup")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -310,15 +334,7 @@ namespace _3AashYaCoach.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("_3AashYaCoach.Models.User", "Trainee")
-                        .WithMany()
-                        .HasForeignKey("TraineeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Coach");
-
-                    b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.ChatMessage", b =>
@@ -338,6 +354,25 @@ namespace _3AashYaCoach.Migrations
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.PlanSubscription", b =>
+                {
+                    b.HasOne("_3AashYaCoach.Models.User", "Trainee")
+                        .WithMany()
+                        .HasForeignKey("TraineeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("_3AashYaCoach.Models.WorkoutPlan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("WorkoutPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.WorkoutExercise", b =>

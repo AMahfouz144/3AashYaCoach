@@ -12,8 +12,8 @@ using _3AashYaCoach.Models.Context;
 namespace _3AashYaCoach.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250523061405_Plan")]
-    partial class Plan
+    [Migration("20250525161544_PlanSubscriptions")]
+    partial class PlanSubscriptions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,23 +169,73 @@ namespace _3AashYaCoach.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PrimaryGoal")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
 
                     b.Property<string>("PlanName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TraineeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("PrimaryGoal")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CoachId");
 
+                    b.ToTable("WorkoutPlans");
+                });
+
+            modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.ChatMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.PlanSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("SubscribedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TraineeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkoutPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
                     b.HasIndex("TraineeId");
 
-                    b.ToTable("WorkoutPlans");
+                    b.HasIndex("WorkoutPlanId");
+
+                    b.ToTable("PlanSubscriptions");
                 });
 
             modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.WorkoutExercise", b =>
@@ -201,14 +251,16 @@ namespace _3AashYaCoach.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Reps")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Sets")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("WorkoutDayId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("difficulty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("muscleGroup")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -285,13 +337,43 @@ namespace _3AashYaCoach.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Coach");
+                });
+
+            modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.ChatMessage", b =>
+                {
+                    b.HasOne("_3AashYaCoach.Models.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("_3AashYaCoach.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.PlanSubscription", b =>
+                {
                     b.HasOne("_3AashYaCoach.Models.User", "Trainee")
                         .WithMany()
                         .HasForeignKey("TraineeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Coach");
+                    b.HasOne("_3AashYaCoach.Models.WorkoutPlan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("WorkoutPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
 
                     b.Navigation("Trainee");
                 });

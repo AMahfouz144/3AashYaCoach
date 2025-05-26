@@ -1,4 +1,6 @@
-﻿using _3AashYaCoach.Dtos;
+﻿using _3AashYaCoach._3ash_ya_coach.Dtos;
+using _3AashYaCoach._3ash_ya_coach.Services.SavedCoachService;
+using _3AashYaCoach.Dtos;
 using _3AashYaCoach.Models;
 using _3AashYaCoach.Models.Context;
 using _3AashYaCoach.Models.Enums;
@@ -13,12 +15,14 @@ namespace _3AashYaCoach.Controllers
     public class SavedCoachesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public SavedCoachesController(AppDbContext context)
+        private readonly ISavedCoachService _savedCoachService;
+        public SavedCoachesController(AppDbContext context,ISavedCoachService savedCoachService)
         {
             _context = context;
+            _savedCoachService = savedCoachService;
         }
 
-        [HttpPost("SaveTrainers")]
+        [HttpPost("SaveMultipleCoaches")]
         public async Task<IActionResult> SaveMultipleCoaches([FromBody] SaveCoachesDto dto)
         {
             // تحقق من وجود المتدرب
@@ -63,31 +67,36 @@ namespace _3AashYaCoach.Controllers
                 Skipped = alreadySaved
             });
         }
+
         [HttpGet("GetSavedTrainers/{traineeId}")]
         public async Task<IActionResult> GetSavedCoaches(Guid traineeId)
         {
-            // تحقق من وجود المتدرب
-            var trainee = await _context.Users.FindAsync(traineeId);
-            if (trainee == null || trainee.Role != UserRole.Trainee)
+            var result = await _savedCoachService.GetSavedCoachesDetailsAsync(traineeId);
+            if (result == null)
                 return NotFound("Trainee not found or invalid.");
 
-            // إحضار المدربين المحفوظين
-            var savedCoaches = await _context.SavedCoaches
-                .Where(sc => sc.TraineeId == traineeId)
-                .Include(sc => sc.Coach)
-                .Select(sc => new
-                {
-                    CoachId = sc.Coach.Id,
-                    CoachName = sc.Coach.FullName,
-                    CoachEmail = sc.Coach.Email,
-                })
-                .ToListAsync();
+            return Ok(result);
+        }
+        [HttpPost("SaveTrainer")]
+        public async Task<IActionResult> SaveSingleCoach([FromBody] SaveSingleCoachDto dto)
+        {
+            var result = await _savedCoachService.SaveSingleCoachAsync(dto);
 
-            return Ok(new
-            {
-                Count = savedCoaches.Count,
-                Coaches = savedCoaches
-            });
+            if (result == null)
+                return Ok(new { Message = "Coach saved successfully." });
+
+            return BadRequest(new { Message = result });
+        }
+
+        [HttpDelete("UnsaveTrainer")]
+        public async Task<IActionResult> UnsaveCoach([FromBody] UnsaveCoachDto dto)
+        {
+            var result = await _savedCoachService.UnsaveSingleCoachAsync(dto);
+
+            if (result == null)
+                return Ok(new { Message = "Coach unsaved successfully." });
+
+            return BadRequest(new { Message = result });
         }
 
 

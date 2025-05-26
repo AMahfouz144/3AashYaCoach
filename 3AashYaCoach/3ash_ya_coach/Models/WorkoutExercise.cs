@@ -17,8 +17,8 @@ namespace _3AashYaCoach._3ash_ya_coach.Models
         [Required]
         public string Name { get; set; }
 
-        public int Sets { get; set; }
-        public int Reps { get; set; }
+        public string muscleGroup { get; set; }
+        public string difficulty { get; set; }
         public string? Notes { get; set; }
     }
 }
