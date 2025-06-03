@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace _3AashYaCoach.ViewModel
+namespace _3AashYaCoach.ViewsControllers.Models
 {
     public class LoginViewModel
     {

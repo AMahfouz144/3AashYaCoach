@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _3AashYaCoach.Models.Context;
 
@@ -11,9 +12,11 @@ using _3AashYaCoach.Models.Context;
 namespace _3AashYaCoach.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250530193640_Unique_Day_Number")]
+    partial class Unique_Day_Number
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,9 +224,6 @@ namespace _3AashYaCoach.Migrations
                     b.Property<DateTime>("SubscribedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("SubscriptionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("TraineeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -231,8 +231,6 @@ namespace _3AashYaCoach.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SubscriptionId");
 
                     b.HasIndex("TraineeId");
 
@@ -364,12 +362,6 @@ namespace _3AashYaCoach.Migrations
 
             modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.PlanSubscription", b =>
                 {
-                    b.HasOne("_3AashYaCoach.Models.Subscription", "Subscription")
-                        .WithMany("PlanSubscriptions")
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("_3AashYaCoach.Models.User", "Trainee")
                         .WithMany()
                         .HasForeignKey("TraineeId")
@@ -384,8 +376,6 @@ namespace _3AashYaCoach.Migrations
 
                     b.Navigation("Plan");
 
-                    b.Navigation("Subscription");
-
                     b.Navigation("Trainee");
                 });
 
@@ -398,11 +388,6 @@ namespace _3AashYaCoach.Migrations
                         .IsRequired();
 
                     b.Navigation("Day");
-                });
-
-            modelBuilder.Entity("_3AashYaCoach.Models.Subscription", b =>
-                {
-                    b.Navigation("PlanSubscriptions");
                 });
 
             modelBuilder.Entity("_3AashYaCoach.Models.User", b =>

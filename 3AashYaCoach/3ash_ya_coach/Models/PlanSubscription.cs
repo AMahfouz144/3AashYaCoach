@@ -18,6 +18,10 @@ namespace _3AashYaCoach._3ash_ya_coach.Models
         public Guid TraineeId { get; set; }
         [ForeignKey("TraineeId")]
         public User Trainee { get; set; }
+        [Required]
+        public Guid SubscriptionId { get; set; }
+        [ForeignKey("SubscriptionId")]
+        public Subscription Subscription { get; set; }
 
         public DateTime SubscribedAt { get; set; } = DateTime.UtcNow;
     }

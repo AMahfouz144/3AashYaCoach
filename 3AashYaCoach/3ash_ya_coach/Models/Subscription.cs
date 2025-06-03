@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using _3AashYaCoach._3ash_ya_coach.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace _3AashYaCoach.Models
@@ -25,5 +26,6 @@ namespace _3AashYaCoach.Models
 
         [MaxLength(500)]
         public string? Notes { get; set; }
+        public ICollection<PlanSubscription> PlanSubscriptions { get; set; }
     }
 }

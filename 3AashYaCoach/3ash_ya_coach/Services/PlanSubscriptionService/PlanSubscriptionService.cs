@@ -21,13 +21,20 @@ namespace _3AashYaCoach._3ash_ya_coach.Services.PlanSubscriptionService
             if (trainee == null || trainee.Role != UserRole.Trainee)
                 return "Invalid trainee.";
 
-            var plan = await _context.WorkoutPlans.FindAsync(dto.WorkoutPlanId);
+            var plan = await _context.WorkoutPlans
+                .FirstOrDefaultAsync(p => p.Id == dto.WorkoutPlanId);
             if (plan == null)
                 return "Workout plan not found.";
 
+            var coachId = plan.CoachId;
+
+            var subscription = await _context.Subscriptions
+                .FirstOrDefaultAsync(s => s.TraineeId == dto.TraineeId && s.CoachId == coachId);
+            if (subscription == null)
+                return "You must be subscribed to this coach before subscribing to the plan.";
+
             var exists = await _context.PlanSubscriptions
                 .AnyAsync(x => x.TraineeId == dto.TraineeId && x.WorkoutPlanId == dto.WorkoutPlanId);
-
             if (exists)
                 return "Already subscribed to this plan.";
 
@@ -35,7 +42,8 @@ namespace _3AashYaCoach._3ash_ya_coach.Services.PlanSubscriptionService
             {
                 Id = Guid.NewGuid(),
                 WorkoutPlanId = dto.WorkoutPlanId,
-                TraineeId = dto.TraineeId
+                TraineeId = dto.TraineeId,
+                SubscriptionId = subscription.Id
             };
 
             _context.PlanSubscriptions.Add(sub);

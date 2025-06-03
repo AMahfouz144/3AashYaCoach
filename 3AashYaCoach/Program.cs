@@ -1,13 +1,15 @@
 ﻿using _3AashYaCoach._3ash_ya_coach.Services;
+using _3AashYaCoach._3ash_ya_coach.Services.LoginService;
 using _3AashYaCoach._3ash_ya_coach.Services.PlanSubscriptionService;
 using _3AashYaCoach._3ash_ya_coach.Services.SavedCoachService;
+using _3AashYaCoach._3ash_ya_coach.Services.UserInfoService;
 using _3AashYaCoach._3ash_ya_coach.Shared;
 using _3AashYaCoach.Models.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +24,34 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "3AashYaCoach", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Enter JWT Bearer token only (no 'Bearer ' prefix)",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 builder.Services.AddAuthentication(options =>
@@ -31,8 +61,8 @@ builder.Services.AddAuthentication(options =>
 })
 .AddCookie(options =>
 {
-    options.LoginPath = "/Identity/Signin";
-    options.AccessDeniedPath = "/Identity/AccessDenied";
+    options.LoginPath = "Identity/Signin";
+    options.AccessDeniedPath = "Identity/AccessDenied";
 })
 .AddJwtBearer(options =>
 {
@@ -62,7 +92,13 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
+builder.Services.AddSession();
+builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<ISavedCoachService, SavedCoachService>();
+builder.Services.AddScoped<IUserInfoService, UserInfoService>();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IPlanSubscriptionService, PlanSubscriptionService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -81,16 +117,13 @@ builder.Services.AddSignalR()
         options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
     });
 
-builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
-
-builder.Services.AddScoped<IChatService, ChatService>();
-builder.Services.AddScoped<IPlanSubscriptionService, PlanSubscriptionService>();
 var app = builder.Build();
 
+app.UseSession();
 
 app.UseStaticFiles();
-if (app.Environment.IsProduction())
-//if (app.Environment.IsDevelopment())
+//if (app.Environment.IsProduction())
+    if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

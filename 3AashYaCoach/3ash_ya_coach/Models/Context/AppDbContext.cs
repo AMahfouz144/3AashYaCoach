@@ -18,7 +18,9 @@ namespace _3AashYaCoach.Models.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<WorkoutDay>()
+      .HasIndex(d => new { d.WorkoutPlanId, d.DayNumber })
+      .IsUnique();
             // إعداد العلاقة 1-1 بين User و Trainer
             modelBuilder.Entity<Coach>()
                 .HasOne(t => t.User)
@@ -60,6 +62,12 @@ namespace _3AashYaCoach.Models.Context
                 .HasMany(d => d.Exercises)
                 .WithOne(e => e.Day)
                 .HasForeignKey(e => e.WorkoutDayId);
+            modelBuilder.Entity<PlanSubscription>()
+    .HasOne(p => p.Subscription)
+    .WithMany(s => s.PlanSubscriptions)
+    .HasForeignKey(p => p.SubscriptionId)
+    .OnDelete(DeleteBehavior.Cascade);
+
 
         }
     }

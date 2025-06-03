@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="3ash_ya_coach\Middleware\" />
     <Folder Include="wwwroot\Uploads\Coaches\" />
   </ItemGroup>
 

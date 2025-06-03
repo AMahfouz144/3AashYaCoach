@@ -2,23 +2,23 @@
 using _3AashYaCoach.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using _3AashYaCoach.Dtos;
-
+using _3AashYaCoach._3ash_ya_coach.Services.LoginService;
+using _3AashYaCoach._3ash_ya_coach.Services.UserInfoService;
+using Microsoft.AspNetCore.Authorization;
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
-    private readonly IConfiguration _configuration;
+    private readonly ILoginService _loginService;
 
-    public AuthController(AppDbContext context, IConfiguration configuration)
+    public AuthController(AppDbContext context, ILoginService loginService)
     {
         _context = context;
-        _configuration = configuration;
+        _loginService = loginService;
+
     }
 
     [HttpPost("register")]
@@ -45,29 +45,23 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-            return Unauthorized("Invalid credentials.");
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
+        try
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name , user.FullName),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim("Email", user.Email),
-            }),
-            Expires = DateTime.UtcNow.AddDays(7),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var jwt = tokenHandler.WriteToken(token);
-
-        return Ok(new { token = jwt });
+            var token = await _loginService.LoginAsync(dto.Email, dto.Password);
+            return Ok(new { token });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(ex.Message);
+        }
     }
+    [Authorize]
+    [HttpGet("GetUserInfo")]
+    public async Task<IActionResult> GetUserInfo([FromServices] IUserInfoService service)
+    {
+        var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("Invalid token"));
+        var userInfo = await service.GetUserInfoAsync(userId);
+        return Ok(userInfo);
+    }
+
 }
