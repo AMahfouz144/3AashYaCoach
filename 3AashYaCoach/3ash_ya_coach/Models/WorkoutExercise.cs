@@ -19,6 +19,8 @@ namespace _3AashYaCoach._3ash_ya_coach.Models
 
         public string muscleGroup { get; set; }
         public string difficulty { get; set; }
+        public bool IsCompleted { get; set; } = false;
+        public string VideoLink { get; set; } = string.Empty;
         public string? Notes { get; set; }
     }
 }

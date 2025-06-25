@@ -418,6 +418,8 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
                     e.Name,
                     e.difficulty,
                     e.muscleGroup,
+                    e.VideoLink,
+                    e.IsCompleted,
                     e.Notes
                 })
             });
@@ -464,6 +466,26 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { Message = $"Workout day marked as {(isCompleted ? "completed" : "not completed")}." });
+        }
+
+        [HttpPut("ToggleDayCompleted/{dayId}")]
+        public async Task<IActionResult> ToggleDayCompleted(Guid dayId)
+        {
+            var day = await _context.WorkoutDays.FindAsync(dayId);
+            if (day == null)
+                return NotFound(new { Message = "Workout day not found." });
+
+            // Toggle the completion status
+            day.IsCompleted = !day.IsCompleted;
+            
+            _context.WorkoutDays.Update(day);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { 
+                Message = $"Workout day marked as {(day.IsCompleted ? "completed" : "not completed")}.",
+                DayId = day.Id,
+                IsCompleted = day.IsCompleted
+            });
         }
 
     }

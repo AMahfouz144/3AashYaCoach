@@ -24,6 +24,7 @@ namespace _3AashYaCoach.Models
         //[ForeignKey("TraineeId")]
         //public User? Trainee { get; set; }
         public bool IsPublic { get; set; } = false;
+        public bool IsFollwoed { get; set; } = false;
         public ICollection<WorkoutDay> Days { get; set; }
 
     }
