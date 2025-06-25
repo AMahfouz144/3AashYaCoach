@@ -144,11 +144,57 @@ namespace _3AashYaCoach._3ash_ya_coach.Services.WorkoutPlanService
             return null;
         }
 
-        public async Task<WorkoutPlan?> GetPlanById(Guid planId)
+        public async Task<WorkoutPlanBriefDto?> GetPlanById(Guid planId)
         {
-            return await _context.WorkoutPlans
+            var plan = await _context.WorkoutPlans
                 .Include(p => p.Coach)
                 .FirstOrDefaultAsync(p => p.Id == planId);
+          
+            var result = new WorkoutPlanBriefDto
+            {
+                Id = plan?.Id ?? Guid.Empty,
+                PlanName = plan?.PlanName ?? string.Empty,
+                PrimaryGoal = plan?.PrimaryGoal ?? string.Empty,
+                CoachId = plan?.CoachId ?? Guid.Empty,
+                CoachName = plan?.Coach?.FullName ?? string.Empty,
+                CreatedAt = plan?.CreatedAt ?? DateTime.MinValue,
+                IsPublic = plan?.IsPublic??false
+            };
+
+            return result;
         }
+        public async Task<List<WorkoutPlanBriefDto>> GetPlansByCoachIdsAsync(List<Guid> coachIds, Guid traineeId)
+        {
+            // أولاً نحضر كل الخطط المطلوبة
+            var plans = await _context.WorkoutPlans
+                .Where(p => coachIds.Contains(p.CoachId))
+                .Include(p => p.Coach)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+
+            // ثم نحضر كل معرفات الخطط التي اشترك فيها هذا المتدرب
+            var followedPlanIds = await _context.PlanSubscriptions
+                .Where(ps => ps.TraineeId == traineeId)
+                .Select(ps => ps.WorkoutPlanId)
+                .ToListAsync();
+
+            // أخيراً نعيد قائمة الـ DTO مع تحديد هل الخطة متابعَة أم لا
+            var result = plans.Select(p => new WorkoutPlanBriefDto
+            {
+                Id = p.Id,
+                PlanName = p.PlanName,
+                PrimaryGoal = p.PrimaryGoal,
+                CoachId = p.CoachId,
+                CoachName = p.Coach.FullName,
+                CreatedAt = p.CreatedAt,
+                IsPublic = p.IsPublic,
+                IsFollowd = followedPlanIds.Contains(p.Id)
+            }).ToList();
+
+            return result;
+        }
+
+
+
     }
 }

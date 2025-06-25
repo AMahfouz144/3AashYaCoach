@@ -18,6 +18,8 @@ namespace _3AashYaCoach.Models
         public int DayNumber { get; set; } // optional: 1 - 30
         public string DayName { get; set; }
         public string? Notes { get; set; }
+        public bool IsCompleted { get; set; } = false;
+
 
         public ICollection<WorkoutExercise> Exercises { get; set; }
     }

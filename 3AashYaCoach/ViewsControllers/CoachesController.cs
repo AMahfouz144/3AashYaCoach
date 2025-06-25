@@ -18,14 +18,14 @@ namespace _3AashYaCoach.ViewsControllers
             _context = context;
         }
 
-        // GET: Coaches
+        // GET: Trainers
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Trainers.Include(c => c.User);
             return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Coaches/Details/5
+        // GET: Trainers/Details/5
         //public async Task<IActionResult> Details(Guid? id)
         //{
         //    if (id == null)
@@ -49,7 +49,7 @@ namespace _3AashYaCoach.ViewsControllers
             return View();
         }
 
-        // POST: Coaches/CreateFull
+        // POST: Trainers/CreateFull
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateCoachViewModel model, IFormFile? ProfileImage)
@@ -124,7 +124,7 @@ namespace _3AashYaCoach.ViewsControllers
             return View(model);
         }
 
-        // POST: Coaches/Edit/5
+        // POST: Trainers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -150,7 +150,7 @@ namespace _3AashYaCoach.ViewsControllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Coaches/Delete/5
+        // GET: Trainers/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -169,7 +169,7 @@ namespace _3AashYaCoach.ViewsControllers
             return View(coach);
         }
 
-        // POST: Coaches/Delete/5
+        // POST: Trainers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)

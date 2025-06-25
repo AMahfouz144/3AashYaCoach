@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _3AashYaCoach.Models.Context;
 
@@ -11,9 +12,11 @@ using _3AashYaCoach.Models.Context;
 namespace _3AashYaCoach.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250610085516_notification")]
+    partial class notification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,9 +144,6 @@ namespace _3AashYaCoach.Migrations
                     b.Property<int>("DayNumber")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
@@ -264,33 +264,6 @@ namespace _3AashYaCoach.Migrations
                     b.HasIndex("WorkoutPlanId");
 
                     b.ToTable("PlanSubscriptions");
-                });
-
-            modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.TrainerRating", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CoachId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RatedByUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("RatingValue")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CoachId");
-
-                    b.HasIndex("RatedByUserId");
-
-                    b.ToTable("TrainerRatings");
                 });
 
             modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.WorkoutExercise", b =>
@@ -439,25 +412,6 @@ namespace _3AashYaCoach.Migrations
                     b.Navigation("Subscription");
 
                     b.Navigation("Trainee");
-                });
-
-            modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.TrainerRating", b =>
-                {
-                    b.HasOne("_3AashYaCoach.Models.Coach", "Coach")
-                        .WithMany()
-                        .HasForeignKey("CoachId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("_3AashYaCoach.Models.User", "RatedBy")
-                        .WithMany()
-                        .HasForeignKey("RatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coach");
-
-                    b.Navigation("RatedBy");
                 });
 
             modelBuilder.Entity("_3AashYaCoach._3ash_ya_coach.Models.WorkoutExercise", b =>

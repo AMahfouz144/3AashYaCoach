@@ -6,22 +6,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using _3AashYaCoach.Models.Enums;
 using _3AashYaCoach._3ash_ya_coach.Services.PlanSubscriptionService;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using _3AashYaCoach._3ash_ya_coach.Shared;
+using _3AashYaCoach._3ash_ya_coach.Services.WorkoutPlanService;
 
 namespace _3AashYaCoach._3ash_ya_coach.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class WorkoutPlansController : ControllerBase
     {
         private readonly AppDbContext _context;
         private readonly IPlanSubscriptionService _subscriptionService;
-        public WorkoutPlansController(AppDbContext context, IPlanSubscriptionService subscriptionService)
+        private readonly IWorkoutPlanService _workoutPlanService;
+        public WorkoutPlansController(AppDbContext context, IPlanSubscriptionService subscriptionService, IWorkoutPlanService _workoutPlanService)
         {
             _context = context;
-            _subscriptionService= subscriptionService;
+            this._workoutPlanService = _workoutPlanService;
+            _subscriptionService = subscriptionService;
         }
         [HttpPost("Subscribe")]
-        //[Authorize(Roles = "Trainee")]6
         public async Task<IActionResult> Subscribe([FromBody] SubscribeToPlanDto dto)
         {
             var result = await _subscriptionService.SubscribeAsync(dto);
@@ -31,7 +37,6 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
         }
 
         [HttpDelete("Unsubscribe")]
-        //[Authorize(Roles = "Trainee")]
         public async Task<IActionResult> Unsubscribe([FromBody] SubscribeToPlanDto dto)
         {
             var result = await _subscriptionService.UnsubscribeAsync(dto);
@@ -46,6 +51,7 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
             var count = await _subscriptionService.GetSubscribersCountAsync(planId);
             return Ok(new { PlanId = planId, SubscribersCount = count });
         }
+      
         [HttpPost("CreateNewPlan")]
         public async Task<IActionResult> CreatePlan([FromBody] CreatePlanHeaderDto dto)
         {
@@ -75,17 +81,15 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
             return Ok(new { Message = "Plan created successfully." });
         }
         [HttpPut("UpdatePlan")]
-        //[Authorize(Roles = "Coach")]
         public async Task<IActionResult> UpdateWorkoutPlan([FromBody] UpdateWorkoutPlanDto dto)
         {
             var plan = await _context.WorkoutPlans.FindAsync(dto.PlanId);
             if (plan == null)
                 return NotFound("Workout plan not found.");
 
-            // تحقق من أن المدرب الحالي هو نفسه صاحب الخطة
-            //var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //if (plan.CoachId.ToString() != currentUserId)
-            //    return Forbid("You are not authorized to update this plan.");
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (plan.CoachId.ToString() != currentUserId)
+                return Forbid("You are not authorized to update this plan.");
 
             plan.PlanName = dto.PlanName;
             plan.PrimaryGoal = dto.PrimaryGoal;
@@ -180,8 +184,6 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
             return Ok(new { message = "Workout plan, days, and exercises updated successfully." });
         }
 
-
-
         [HttpPost("AddPlanDays/{planId}")]
         public async Task<IActionResult> AddDaysToPlan(Guid planId, [FromBody] List<WorkoutDayDto> daysDto)
         {
@@ -214,68 +216,33 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Days added successfully." });
         }
-        //[HttpPut("EditPlanDayAndExercise/{dayId}")]
-        //public async Task<IActionResult> UpdateWorkoutDayAndExercise(Guid dayId, [FromBody] WorkoutDayDto dto)
-        //{
-        //    var day = await _context.WorkoutDays
-        //        .Include(d => d.Exercises)
-        //        .FirstOrDefaultAsync(d => d.Id == dayId);
-
-        //    if (day == null)
-        //        return NotFound("Workout day not found.");
-
-        //    // تحديث بيانات اليوم
-        //    day.DayNumber = dto.DayNumber;
-        //    day.DayName = dto.DayName;
-        //    day.Notes = dto.Notes;
-
-        //    foreach (var exDto in dto.Exercises)
-        //    {
-        //        var existingExercise = day.Exercises.FirstOrDefault(e => e.Id == exDto.Id);
-
-        //        if (existingExercise != null)
-        //        {
-        //            // تعديل تمرين موجود
-        //            existingExercise.Name = exDto.Name;
-        //            existingExercise.difficulty = exDto.difficulty;
-        //            existingExercise.muscleGroup = exDto.muscleGroup;
-        //            existingExercise.Notes = exDto.Notes;
-        //        }
-        //        else
-        //        {
-        //            // إضافة تمرين جديد
-        //            var newExercise = new WorkoutExercise
-        //            {
-        //                Id = Guid.NewGuid(),
-        //                WorkoutDayId = day.Id,
-        //                Name = exDto.Name,
-        //                difficulty = exDto.difficulty,
-        //                muscleGroup = exDto.muscleGroup,
-        //                Notes = exDto.Notes
-        //            };
-        //            day.Exercises.Add(newExercise);
-        //        }
-        //    }
-
-        //    await _context.SaveChangesAsync();
-        //    return Ok(new { message = "Workout day and exercises updated successfully." });
-        //}
-        [HttpDelete("days/{dayId}")]
-        public async Task<IActionResult> DeleteWorkoutDay(Guid dayId)
+      
+        [HttpDelete("DeletePlan/{planId}")]
+        public async Task<IActionResult> DeletePlan(Guid planId)
         {
-            var day = await _context.WorkoutDays
-                .Include(d => d.Exercises)
-                .FirstOrDefaultAsync(d => d.Id == dayId);
+            var plan = await _context.WorkoutPlans
+                .Include(p => p.Days)
+                    .ThenInclude(d => d.Exercises)
+                .FirstOrDefaultAsync(p => p.Id == planId);
 
-            if (day == null)
-                return NotFound("Workout day not found.");
- 
-            _context.WorkoutExercises.RemoveRange(day.Exercises);
+            if (plan == null)
+                return NotFound(new ErrorResponse("PlanNotFound", "Workout plan not found."));
 
-            _context.WorkoutDays.Remove(day);
+            // حذف التمارين أولًا
+            foreach (var day in plan.Days)
+            {
+                _context.WorkoutExercises.RemoveRange(day.Exercises);
+            }
+
+            // حذف الأيام
+            _context.WorkoutDays.RemoveRange(plan.Days);
+
+            // حذف الخطة
+            _context.WorkoutPlans.Remove(plan);
 
             await _context.SaveChangesAsync();
-            return Ok(new { message = "Workout day deleted successfully." });
+
+            return Ok(new { message = "Workout plan deleted successfully." });
         }
 
         [HttpGet("GetPlanById/{planId}")]
@@ -306,6 +273,7 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
                         d.DayNumber,
                         d.DayName,
                         d.Notes,
+                        d.IsCompleted,
                         Exercises = d.Exercises.Select(e => new
                         {
                             e.Id,
@@ -319,7 +287,6 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
 
             return Ok(result);
         }
-
 
         [HttpGet("GetPublicPlans")]
         public async Task<IActionResult> GetPublicPlans()
@@ -339,7 +306,6 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
             return Ok(plans);
         }
         [HttpGet("GetPlansByCoach/{coachId}")]
-        //[Authorize(Roles = "Coach,Admin")] 
         public async Task<IActionResult> GetPlansByCoach(Guid coachId)
         {
             var coach = await _context.Users.FindAsync(coachId);
@@ -358,6 +324,7 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
                     p.PrimaryGoal,
                     p.CreatedAt,
                     p.IsPublic,
+                    
                     Days = p.Days
                         .OrderBy(d => d.DayNumber)
                         .Select(d => new
@@ -366,6 +333,7 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
                             d.DayNumber,
                             d.DayName,
                             d.Notes,
+                            d.IsCompleted,
                             Exercises = d.Exercises.Select(e => new
                             {
                                 e.Id,
@@ -386,8 +354,19 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
                 Plans = plans
             });
         }
+        [HttpPost("GetPlansByCoachIds")]
+        public async Task<IActionResult> GetPlansByCoachIds([FromBody] CoachPlansRequestDto dto)
+        {
+            if (dto.CoachIds == null || dto.CoachIds.Count == 0)
+                return BadRequest(new ErrorResponse("InvalidRequest", "No coach IDs provided."));
+
+            var plans = await _workoutPlanService.GetPlansByCoachIdsAsync(dto.CoachIds, dto.TraineeId);
+            return Ok(plans);
+        }
 
 
+
+        // ===========================================================================================================//
         [HttpPost("CreateDay/{planId}")]
         public async Task<IActionResult> CreateDay(Guid planId, [FromBody] WorkoutDayDto dto)
         {
@@ -473,5 +452,19 @@ namespace _3AashYaCoach._3ash_ya_coach.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Workout day deleted successfully." });
         }
+        [HttpPut("SetDayCompleted/{dayId}")]
+        public async Task<IActionResult> SetDayCompleted(Guid dayId, [FromQuery] bool isCompleted)
+        {
+            var day = await _context.WorkoutDays.FindAsync(dayId);
+            if (day == null)
+                return NotFound(new { Message = "Workout day not found." });
+
+            day.IsCompleted = isCompleted;
+            _context.WorkoutDays.Update(day);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = $"Workout day marked as {(isCompleted ? "completed" : "not completed")}." });
+        }
+
     }
 }

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3AashYaCoach - Domain Model</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #667eea 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .diagram-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .legend {
+            background: #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .legend h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            margin-right: 10px;
+        }
+        .entity-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .entity-details h3 {
+            margin-top: 0;
+            color: #495057;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .entity-details ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .entity-details li {
+            margin-bottom: 5px;
+        }
+        .relationship-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .relationship-note h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏋️‍♂️ 3AashYaCoach</h1>
+            <p>Sports Training Platform - Domain Model</p>
+        </div>
+        
+        <div class="content">
+            <div class="legend">
+                <h3>📋 Legend</h3>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e3f2fd;"></div>
+                    <span>Core Entities (User Management)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f3e5f5;"></div>
+                    <span>Workout Management</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e8f5e8;"></div>
+                    <span>Subscription & Social</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fff3e0;"></div>
+                    <span>Communication & Notifications</span>
+                </div>
+            </div>
+
+            <div class="diagram-container">
+                <h3>🏗️ Domain Model Diagram</h3>
+                <div class="mermaid">
+                    erDiagram
+                        %% Core User Management
+                        User {
+                            Guid Id PK
+                            string FullName
+                            string Email
+                            string PasswordHash
+                            UserRole Role
+                        }
+                        
+                        Coach {
+                            Guid UserId PK,FK
+                            string Certificates
+                            string ExperienceDetails
+                            string ProfileImagePath
+                            double Rate
+                        }
+                        
+                        UserRole {
+                            enum Admin
+                            enum Coach
+                            enum Trainee
+                        }
+                        
+                        %% Workout Management
+                        WorkoutPlan {
+                            Guid Id PK
+                            string PlanName
+                            string PrimaryGoal
+                            DateTime CreatedAt
+                            Guid CoachId FK
+                            bool IsPublic
+                        }
+                        
+                        WorkoutDay {
+                            Guid Id PK
+                            Guid WorkoutPlanId FK
+                            int DayNumber
+                            string DayName
+                            string Notes
+                            bool IsCompleted
+                        }
+                        
+                        WorkoutExercise {
+                            Guid Id PK
+                            Guid WorkoutDayId FK
+                            string Name
+                            string muscleGroup
+                            string difficulty
+                            string Notes
+                        }
+                        
+                        %% Subscription & Social
+                        Subscription {
+                            Guid Id PK
+                            Guid TraineeId FK
+                            Guid CoachId FK
+                            DateTime SubscribedAt
+                            string Notes
+                        }
+                        
+                        PlanSubscription {
+                            Guid Id PK
+                            Guid WorkoutPlanId FK
+                            Guid TraineeId FK
+                            Guid SubscriptionId FK
+                            DateTime SubscribedAt
+                        }
+                        
+                        SavedCoach {
+                            Guid Id PK
+                            Guid TraineeId FK
+                            Guid CoachId FK
+                            DateTime SavedAt
+                        }
+                        
+                        TrainerRating {
+                            Guid Id PK
+                            Guid CoachId FK
+                            Guid RatedByUserId FK
+                            double RatingValue
+                            DateTime CreatedAt
+                        }
+                        
+                        %% Communication & Notifications
+                        ChatMessage {
+                            Guid Id PK
+                            Guid SenderId FK
+                            Guid ReceiverId FK
+                            string Text
+                            DateTime SentAt
+                        }
+                        
+                        DeviceToken {
+                            Guid Id PK
+                            string UserId
+                            string Token
+                            DateTime CreatedAt
+                        }
+                        
+                        %% Relationships
+                        User ||--o{ Coach : "has"
+                        User ||--o{ WorkoutPlan : "creates"
+                        User ||--o{ Subscription : "as_trainee"
+                        User ||--o{ Subscription : "as_coach"
+                        User ||--o{ SavedCoach : "saves"
+                        User ||--o{ SavedCoach : "is_saved"
+                        User ||--o{ TrainerRating : "rates"
+                        User ||--o{ TrainerRating : "is_rated"
+                        User ||--o{ ChatMessage : "sends"
+                        User ||--o{ ChatMessage : "receives"
+                        
+                        WorkoutPlan ||--o{ WorkoutDay : "contains"
+                        WorkoutDay ||--o{ WorkoutExercise : "includes"
+                        
+                        Subscription ||--o{ PlanSubscription : "has"
+                        WorkoutPlan ||--o{ PlanSubscription : "subscribed_to"
+                        
+                        Coach ||--o{ TrainerRating : "receives"
+                </div>
+            </div>
+
+            <div class="entity-details">
+                <h3>👥 Core Entities</h3>
+                <ul>
+                    <li><strong>User:</strong> Central entity representing all users (Admin, Coach, Trainee)</li>
+                    <li><strong>Coach:</strong> Extended profile for users with Coach role, containing professional details</li>
+                    <li><strong>UserRole:</strong> Enumeration defining user types (Admin, Coach, Trainee)</li>
+                </ul>
+            </div>
+
+            <div class="entity-details">
+                <h3>💪 Workout Management</h3>
+                <ul>
+                    <li><strong>WorkoutPlan:</strong> Training plans created by coaches for trainees</li>
+                    <li><strong>WorkoutDay:</strong> Individual days within a workout plan</li>
+                    <li><strong>WorkoutExercise:</strong> Specific exercises within each workout day</li>
+                </ul>
+            </div>
+
+            <div class="entity-details">
+                <h3>🤝 Subscription & Social Features</h3>
+                <ul>
+                    <li><strong>Subscription:</strong> Relationship between trainee and coach</li>
+                    <li><strong>PlanSubscription:</strong> Specific workout plan subscriptions</li>
+                    <li><strong>SavedCoach:</strong> Trainees can save coaches for future reference</li>
+                    <li><strong>TrainerRating:</strong> Rating system for coaches</li>
+                </ul>
+            </div>
+
+            <div class="entity-details">
+                <h3>💬 Communication & Notifications</h3>
+                <ul>
+                    <li><strong>ChatMessage:</strong> Direct messaging between users</li>
+                    <li><strong>DeviceToken:</strong> Push notification tokens for mobile devices</li>
+                </ul>
+            </div>
+
+            <div class="relationship-note">
+                <h4>🔗 Key Relationships</h4>
+                <ul>
+                    <li><strong>One-to-One:</strong> User ↔ Coach (a user can have one coach profile)</li>
+                    <li><strong>One-to-Many:</strong> User → WorkoutPlan (a coach can create multiple plans)</li>
+                    <li><strong>One-to-Many:</strong> WorkoutPlan → WorkoutDay → WorkoutExercise (hierarchical structure)</li>
+                    <li><strong>Many-to-Many:</strong> User ↔ User through Subscription (trainees can subscribe to multiple coaches)</li>
+                    <li><strong>Many-to-Many:</strong> WorkoutPlan ↔ User through PlanSubscription (plans can be subscribed by multiple trainees)</li>
+                </ul>
+            </div>
+
+            <div class="relationship-note">
+                <h4>🎯 Business Rules</h4>
+                <ul>
+                    <li>Only users with Coach role can create WorkoutPlans</li>
+                    <li>WorkoutPlans can be public or private</li>
+                    <li>Subscriptions are required before accessing coach's plans</li>
+                    <li>Users can rate coaches they have subscribed to</li>
+                    <li>Chat messages are between any two users</li>
+                    <li>Device tokens enable push notifications</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true
+            },
+            er: {
+                useMaxWidth: true,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html> 

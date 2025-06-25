@@ -34,33 +34,33 @@ namespace _3AashYaCoach._3ash_ya_coach.Services.LoginService
             var claims = new List<Claim>
     {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new Claim(ClaimTypes.Name, user.FullName),
+        new Claim("Name", user.FullName),
         new Claim(ClaimTypes.Role, user.Role.ToString()),
         new Claim("Email", user.Email)
     };
 
             // إضافة معرفات الاشتراكات (SubscriptionId) و CoachId
-            foreach (var subscription in user.SubscriptionsAsTrainee)
-            {
-                claims.Add(new Claim("SubscriptionId", subscription.Id.ToString()));
-                claims.Add(new Claim("CoachId", subscription.CoachId.ToString()));
-            }
+            //foreach (var subscription in user.SubscriptionsAsTrainee)
+            //{
+            //    claims.Add(new Claim("SubscriptionId", subscription.Id.ToString()));
+            //    claims.Add(new Claim("CoachId", subscription.CoachId.ToString()));
+            //}
 
             // إضافة المدرّبين المحفوظين
-            foreach (var saved in user.SavedCoaches)
-            {
-                claims.Add(new Claim("SavedCoachId", saved.CoachId.ToString()));
-            }
+            //foreach (var saved in user.SavedCoaches)
+            //{
+            //    claims.Add(new Claim("SavedCoachId", saved.CoachId.ToString()));
+            //}
 
             // إذا كنت تريد تضمين الخطط المشترك فيها أيضًا:
-            var planSubscriptions = await _context.PlanSubscriptions
-                .Where(ps => ps.TraineeId == user.Id)
-                .ToListAsync();
+            //var planSubscriptions = await _context.PlanSubscriptions
+            //    .Where(ps => ps.TraineeId == user.Id)
+            //    .ToListAsync();
 
-            foreach (var planSub in planSubscriptions)
-            {
-                claims.Add(new Claim("PlanId", planSub.WorkoutPlanId.ToString()));
-            }
+            //foreach (var planSub in planSubscriptions)
+            //{
+            //    claims.Add(new Claim("PlanId", planSub.WorkoutPlanId.ToString()));
+            //}
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -3,15 +3,386 @@
     ViewData["PlanName"] = "Access Denied";
 }
 
-<div class="container text-center mt-5">
-    <h1 class="display-4 text-warning">
-        <i class="bi bi-shield-lock"></i> Access Denied
-    </h1>
-    <p class="lead text-muted mt-3">
-        You don't have permission to access this page.
-    </p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Access Denied - 3AashYaCoach</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --warning-color: #f56565;
+            --text-color: #2d3748;
+            --light-bg: #f7fafc;
+            --white: #ffffff;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --border-radius: 15px;
+        }
 
-    <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-4">
-        <i class="bi bi-house-door-fill"></i> Return to Home
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .access-denied-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+
+        .access-denied-header {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #e53e3e 100%);
+            color: var(--white);
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .access-denied-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon-container i {
+            font-size: 2.5rem;
+            color: var(--white);
+        }
+
+        .access-denied-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .access-denied-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .access-denied-body {
+            padding: 40px 30px;
+        }
+
+        .access-denied-body h2 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .access-denied-body p {
+            color: #718096;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-home::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-home:hover::before {
+            left: 100%;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .btn-home:active {
+            transform: translateY(0);
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @@keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0px) rotate(360deg);
+            }
+        }
+
+        /* Media Queries */
+        @@media screen and (max-width: 768px) {
+            .access-denied-container {
+                max-width: 90%;
+                margin: 10px;
+            }
+            
+            .access-denied-body {
+                padding: 30px 20px;
+            }
+            
+            .access-denied-header {
+                padding: 30px 15px;
+            }
+            
+            .access-denied-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .icon-container {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .icon-container i {
+                font-size: 2rem;
+            }
+        }
+
+        @@media screen and (max-width: 480px) {
+            .access-denied-container {
+                max-width: 95%;
+                margin: 5px;
+            }
+            
+            .access-denied-body {
+                padding: 25px 15px;
+            }
+            
+            .access-denied-header {
+                padding: 25px 10px;
+            }
+            
+            .access-denied-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .access-denied-body h2 {
+                font-size: 1.3rem;
+            }
+            
+            .btn-home {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            
+            .icon-container {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .icon-container i {
+                font-size: 1.8rem;
+            }
+        }
+
+        @@media screen and (max-width: 320px) {
+            .access-denied-container {
+                max-width: 98%;
+                margin: 2px;
+            }
+            
+            .access-denied-body {
+                padding: 20px 10px;
+            }
+            
+            .access-denied-header {
+                padding: 20px 8px;
+            }
+            
+            .access-denied-header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .access-denied-body h2 {
+                font-size: 1.1rem;
+            }
+            
+            .btn-home {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Print styles */
+        @@media print {
+            .floating-shapes {
+                display: none;
+            }
+            
+            .access-denied-container {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+        }
+
+        /* High contrast mode */
+        @@media (prefers-contrast: high) {
+            .access-denied-header {
+                background: #000;
+                color: #fff;
+            }
+            
+            .btn-home {
+                background: #000;
+                color: #fff;
+                border: 2px solid #fff;
+            }
+        }
+
+        /* Reduced motion */
+        @@media (prefers-reduced-motion: reduce) {
+            .shape {
+                animation: none;
+            }
+            
+            .btn-home::before {
+                display: none;
+            }
+            
+            .btn-home:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="access-denied-container">
+        <div class="access-denied-header">
+            <div class="icon-container">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>Access Denied</h1>
+            <p>Sorry, you cannot access this page</p>
+        </div>
+
+        <div class="access-denied-body">
+            <h2>Permission Required</h2>
+            <p>
+                It seems you don't have the required permissions to access this page. 
+                If you believe this is an error, please contact the administrator.
+            </p>
+            
+            <a asp-controller="Home" asp-action="Index" class="btn-home">
+                <i class="fas fa-home"></i>
+                Return to Home
     </a>
 </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

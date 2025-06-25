@@ -6,17 +6,25 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using _3AashYaCoach.Dtos;
 using _3AashYaCoach.Models.Enums;
+using Microsoft.AspNetCore.SignalR;
+using _3AashYaCoach._3ash_ya_coach.Services.NotificationService;
+using _3AashYaCoach._3ash_ya_coach.Services.NotificationService.Firebase;
 
 [ApiController]
 [Route("api/[controller]")]
 public class SubscriptionsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly IFirebaseNotificationService _firebaseNotificationService;
 
-    public SubscriptionsController(AppDbContext context)
+    public SubscriptionsController( AppDbContext context, IHubContext<NotificationHub> hubContext,IFirebaseNotificationService firebaseNotificationService)
     {
         _context = context;
+        _hubContext = hubContext;
+        _firebaseNotificationService = firebaseNotificationService;
     }
+
 
     [HttpPost("subscibe")]
     //[Authorize(Roles = "Trainee")]
@@ -45,7 +53,24 @@ public class SubscriptionsController : ControllerBase
 
         _context.Subscriptions.Add(subscription);
         await _context.SaveChangesAsync();
+        // SignalR notification
+        await _hubContext.Clients
+            .User(dto.CoachId.ToString())
+            .SendAsync("ReceiveNotification", $"A new trainee subscribed to you: {trainee.FullName}");
 
+        // Firebase Push Notification
+        var deviceToken = await _context.DeviceTokens
+            .Where(d => d.UserId == dto.CoachId.ToString())
+            .Select(d => d.Token)
+            .FirstOrDefaultAsync();
+
+        if (!string.IsNullOrEmpty(deviceToken))
+        {
+            await _firebaseNotificationService.SendNotificationAsync(
+                deviceToken,
+                "New Subscription",
+                $"{trainee.FullName} has subscribed to your training.");
+        }
         return Ok(new { message = "Subscription created successfully." });
     }
 

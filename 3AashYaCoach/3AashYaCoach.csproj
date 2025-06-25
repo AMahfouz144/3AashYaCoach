@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="FirebaseAdmin" Version="3.2.0" />
     <PackageReference Include="FluentAssertions" Version="8.2.0" />
     <PackageReference Include="JWT" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.16" />
@@ -35,6 +36,12 @@
   <ItemGroup>
     <Folder Include="3ash_ya_coach\Middleware\" />
     <Folder Include="wwwroot\Uploads\Coaches\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="3ash_ya_coach\Services\NotificationService\Firebase\fitness-ce0ca-firebase-adminsdk-fbsvc-76052137ff.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

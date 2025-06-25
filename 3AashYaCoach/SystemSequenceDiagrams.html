@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3AashYaCoach - System Sequence Diagrams</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        :root {
+            --bg-color: #f4f7f9;
+            --primary-color: #4a55e7;
+            --secondary-color: #34d399;
+            --text-color: #334155;
+            --heading-color: #1e293b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 2.5rem;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--heading-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .header h1 .icon {
+            color: var(--primary-color);
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+        }
+
+        .toc {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .toc h3 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.5rem;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .toc h3 .icon {
+            color: var(--primary-color);
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            columns: 2;
+            column-gap: 2.5rem;
+        }
+
+        .toc li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: block;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid transparent;
+        }
+
+        .toc li a:hover {
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+        .diagram-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .diagram-section > h3 {
+            margin: 0;
+            padding: 1.5rem 2rem;
+            font-size: 1.75rem;
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background-color: #f8fafc;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .diagram-section > h3 .icon {
+            color: var(--primary-color);
+        }
+        
+        .use-case-wrapper {
+            padding: 2rem;
+        }
+
+        .use-case-wrapper:not(:last-child) {
+             border-bottom: 1px dashed var(--border-color);
+        }
+        
+        .use-case-description {
+            margin-bottom: 1.5rem;
+        }
+        
+        .use-case-description h4 {
+            font-size: 1.25rem;
+            color: var(--heading-color);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .use-case-description p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .mermaid {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1.5rem; }
+            .header h1 { font-size: 2.25rem; }
+            .header p { font-size: 1rem; }
+            .toc ul { columns: 1; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-sitemap icon"></i>3AashYaCoach</h1>
+            <p>System Sequence Diagrams (SSD)</p>
+        </header>
+        
+        <nav class="toc">
+            <h3><i class="fas fa-list-ul icon"></i>User Scenarios</h3>
+            <ul>
+                <li><a href="#onboarding">Onboarding & Login</a></li>
+                <li><a href="#coach-workflow">Core Coach Workflow</a></li>
+                <li><a href="#trainee-workflow">Core Trainee Workflow</a></li>
+                <li><a href="#interaction">User Interaction</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <!-- Onboarding & Login -->
+            <section id="onboarding" class="diagram-section">
+                <h3><i class="fas fa-user-plus icon"></i>Onboarding & Login</h3>
+                <div class="use-case-wrapper">
+                    <div class="use-case-description">
+                        <h4>New User Registration and First Login</h4>
+                        <p>A new user (either a Trainee or a Coach) registers for an account and logs in for the first time.</p>
+                    </div>
+                    <div class="mermaid">
+                        sequenceDiagram
+                            actor User
+                            participant System
+
+                            User->>System: navigateToRegistrationPage()
+                            User->>System: register(role, name, email, password)
+                            System->>System: validateAndCreateUser()
+                            System-->>User: displayRegistrationSuccess()
+                            User->>System: navigateToLoginPage()
+                            User->>System: login(email, password)
+                            System->>System: validateCredentials()
+                            System-->>User: grantAccessAndRedirectToDashboard()
+                            alt User is Coach
+                                System-->>User: displayCoachDashboard()
+                            else User is Trainee
+                                System-->>User: displayTraineeDashboard()
+                            end
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coach Workflow -->
+            <section id="coach-workflow" class="diagram-section">
+                <h3><i class="fas fa-chalkboard-teacher icon"></i>Core Coach Workflow</h3>
+                <div class="use-case-wrapper">
+                    <div class="use-case-description">
+                        <h4>Coach Creates Profile and a Workout Plan</h4>
+                        <p>After logging in, a coach sets up their professional profile and then creates a new workout plan for their clients.</p>
+                    </div>
+                    <div class="mermaid">
+                        sequenceDiagram
+                            actor Coach
+                            participant System
+        
+                            Coach->>System: login(email, password)
+                            System-->>Coach: grantAccessAndShowDashboard()
+                            Coach->>System: navigateToCreateProfilePage()
+                            Coach->>System: submitProfileDetails(certificates, experience)
+                            System->>System: validateAndSaveProfile()
+                            System-->>Coach: displayProfileConfirmation()
+                            Coach->>System: navigateToCreatePlanPage()
+                            Coach->>System: submitPlanDetails(name, goal, days, exercises)
+                            System->>System: validateAndSavePlan()
+                            System-->>Coach: displayPlanCreationSuccess()
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trainee Workflow -->
+            <section id="trainee-workflow" class="diagram-section">
+                <h3><i class="fas fa-running icon"></i>Core Trainee Workflow</h3>
+                <div class="use-case-wrapper">
+                    <div class="use-case-description">
+                        <h4>Trainee Finds, Subscribes, and Interacts with a Plan</h4>
+                        <p>A trainee browses for coaches, subscribes to one, and then views and interacts with one of their workout plans.</p>
+                    </div>
+                    <div class="mermaid">
+                        sequenceDiagram
+                            actor Trainee
+                            participant System
+        
+                            Trainee->>System: login(email, password)
+                            System-->>Trainee: grantAccessAndShowDashboard()
+                            Trainee->>System: navigateToBrowseCoaches()
+                            Trainee->>System: searchCoaches(criteria)
+                            System-->>Trainee: displayCoachesList(results)
+                            Trainee->>System: selectCoach(coachId)
+                            System-->>Trainee: displayCoachProfile(details)
+                            Trainee->>System: subscribeToCoach()
+                            System->>System: processAndConfirmSubscription()
+                            System-->>Trainee: displaySubscriptionSuccess()
+                            Trainee->>System: navigateToWorkoutPlans()
+                            Trainee->>System: selectPlan(planId)
+                            System-->>Trainee: displayPlanDetails()
+                            Trainee->>System: markDayAsComplete()
+                            System->>System: updateProgress()
+                            System-->>Trainee: displayConfirmation()
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Interaction -->
+            <section id="interaction" class="diagram-section">
+                <h3><i class="fas fa-comments icon"></i>User Interaction</h3>
+                <div class="use-case-wrapper">
+                    <div class="use-case-description">
+                        <h4>Trainee Chats with and Rates a Coach</h4>
+                        <p>A trainee communicates with their coach via chat and leaves a rating on their profile.</p>
+                    </div>
+                    <div class="mermaid">
+                        sequenceDiagram
+                            actor Trainee
+                            participant System
+        
+                            Trainee->>System: navigateToChatWithCoach(coachId)
+                            System-->>Trainee: displayChatHistory()
+                            Trainee->>System: sendMessage(text)
+                            System->>System: saveAndDeliverMessage()
+                            System-->>Trainee: displayNewMessageInUI()
+                            Trainee->>System: navigateToCoachProfile(coachId)
+                            Trainee->>System: submitRating(stars, comment)
+                            System->>System: validateAndSaveRating()
+                            System-->>Trainee: displayRatingConfirmation()
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                background: '#ffffff',
+                primaryColor: '#f8fafc',
+                primaryTextColor: '#334155',
+                primaryBorderColor: '#e2e8f0',
+                lineColor: '#4a55e7',
+                textColor: '#334155',
+                actorBkg: '#4a55e7',
+                actorTextColor: '#ffffff',
+                actorBorder: '#3c4de1',
+                messageTextColor: '#1e293b',
+                sequenceNumberColor: '#ffffff',
+            },
+            sequence: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                showSequenceNumbers: true,
+                actorMargin: 50,
+                boxMargin: 35,
+            }
+        });
+    </script>
+</body>
+</html> 

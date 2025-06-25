@@ -7,9 +7,9 @@
         overflow: hidden;
     }
 
-        .dashboard-card:hover {
-            transform: scale(1.02);
-        }
+    .dashboard-card:hover {
+        transform: scale(1.02);
+    }
 
     .dashboard-icon {
         font-size: 2rem;
@@ -26,11 +26,143 @@
     .stat-text {
         line-height: 1.2;
     }
+
+    .welcome-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .user-role-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+
+    .personal-stats {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .personal-stats h3 {
+        color: #495057;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
 </style>
 
 <div class="container mt-4">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">Welcome back, @ViewBag.UserName!</h1>
+                <p class="mb-0">Here's what's happening with your training platform today.</p>
+                <div class="user-role-badge">
+                    <i class="bi bi-person-circle"></i>
+                    @if (ViewBag.UserRole == "Coach")
+                    {
+                        <span>Coach Dashboard</span>
+                    }
+                    else if (ViewBag.UserRole == "Trainee")
+                    {
+                        <span>Trainee Dashboard</span>
+                    }
+                    else
+                    {
+                        <span>Admin Dashboard</span>
+                    }
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <i class="bi bi-graph-up" style="font-size: 4rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Statistics -->
+    @if (ViewBag.UserRole == "Coach")
+    {
+        <div class="personal-stats">
+            <h3><i class="bi bi-person-check"></i> Your Coaching Statistics</h3>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card border-0 bg-primary text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people-fill" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2">@ViewBag.MySubscribers</h4>
+                            <p class="mb-0">Active Subscribers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-success text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2">@ViewBag.MyWorkoutPlans</h4>
+                            <p class="mb-0">Workout Plans</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-info text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-eye" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2">@ViewBag.MyActivePlans</h4>
+                            <p class="mb-0">Public Plans</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (ViewBag.UserRole == "Trainee")
+    {
+        <div class="personal-stats">
+            <h3><i class="bi bi-person"></i> Your Training Statistics</h3>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card border-0 bg-primary text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-person-check" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2">@ViewBag.MySubscriptions</h4>
+                            <p class="mb-0">Coach Subscriptions</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-success text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-heart" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2">@ViewBag.MySavedCoaches</h4>
+                            <p class="mb-0">Saved Coaches</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-info text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-calendar-event" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2">@ViewBag.MyPlanSubscriptions</h4>
+                            <p class="mb-0">Active Plans</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Platform Statistics -->
+    <h3 class="mb-3"><i class="bi bi-graph-up"></i> Platform Overview</h3>
     <div class="row g-4">
-        <!-- Members -->
+        <!-- Total Members -->
         <div class="col-md-3">
             <div class="card shadow-sm bg-white dashboard-card border-0">
                 <div class="card-body">
@@ -45,7 +177,7 @@
             </div>
         </div>
 
-        <!-- Trainers -->
+        <!-- Active Trainers -->
         <div class="col-md-3">
             <div class="card shadow-sm bg-white dashboard-card border-0">
                 <div class="card-body">
@@ -60,13 +192,13 @@
             </div>
         </div>
 
-        <!-- Sessions -->
+        <!-- Total Workout Plans -->
         <div class="col-md-3">
             <div class="card shadow-sm bg-white dashboard-card border-0">
                 <div class="card-body">
                     <div class="stat-text">
-                        <div class="text-muted">Upcoming Sessions</div>
-                        <div class="fs-4 fw-bold text-dark">@ViewBag.UpcomingSessions</div>
+                        <div class="text-muted">Workout Plans</div>
+                        <div class="fs-4 fw-bold text-dark">@ViewBag.TotalWorkoutPlans</div>
                     </div>
                     <div class="dashboard-icon bg-warning text-white">
                         <i class="bi bi-calendar-event"></i>
@@ -75,19 +207,95 @@
             </div>
         </div>
 
-        <!-- Announcements -->
+        <!-- Total Subscriptions -->
         <div class="col-md-3">
             <div class="card shadow-sm bg-white dashboard-card border-0">
                 <div class="card-body">
                     <div class="stat-text">
-                        <div class="text-muted">Announcements</div>
-                        <div class="fs-4 fw-bold text-dark">@ViewBag.TotalAnnouncements</div>
+                        <div class="text-muted">Subscriptions</div>
+                        <div class="fs-4 fw-bold text-dark">@ViewBag.TotalSubscriptions</div>
                     </div>
                     <div class="dashboard-icon bg-danger text-white">
-                        <i class="bi bi-megaphone"></i>
+                        <i class="bi bi-link-45deg"></i>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-4">
+        <h3 class="mb-3"><i class="bi bi-lightning"></i> Quick Actions</h3>
+        <div class="row g-3">
+            @if (ViewBag.UserRole == "Coach")
+            {
+                <div class="col-md-3">
+                    <a href="/WorkoutPlans/Create" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-circle"></i> Create Workout Plan
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/Coaches" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-people"></i> View Subscribers
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/WorkoutPlans" class="btn btn-outline-success w-100">
+                        <i class="bi bi-calendar-check"></i> My Plans
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/swagger" class="btn btn-outline-info w-100">
+                        <i class="bi bi-gear"></i> API Docs
+                    </a>
+                </div>
+            }
+            else if (ViewBag.UserRole == "Trainee")
+            {
+                <div class="col-md-3">
+                    <a href="/Coaches" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Find Coaches
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/WorkoutPlans" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-calendar-event"></i> Browse Plans
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/SavedCoaches" class="btn btn-outline-success w-100">
+                        <i class="bi bi-heart"></i> Saved Coaches
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/Subscriptions" class="btn btn-outline-info w-100">
+                        <i class="bi bi-link-45deg"></i> My Subscriptions
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-3">
+                    <a href="/Users" class="btn btn-primary w-100">
+                        <i class="bi bi-people"></i> Manage Users
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/Coaches" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-person-check"></i> Manage Coaches
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/WorkoutPlans" class="btn btn-outline-success w-100">
+                        <i class="bi bi-calendar-check"></i> All Plans
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="/swagger" class="btn btn-outline-info w-100">
+                        <i class="bi bi-gear"></i> System Settings
+                    </a>
+                </div>
+            }
         </div>
     </div>
 </div>

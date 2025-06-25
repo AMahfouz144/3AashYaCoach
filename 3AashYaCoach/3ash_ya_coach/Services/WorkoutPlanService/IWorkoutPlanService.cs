@@ -10,6 +10,8 @@ namespace _3AashYaCoach._3ash_ya_coach.Services.WorkoutPlanService
         Task<string?> UnsubscribeFromPlan(SubscribeToPlanDto dto);
         Task<int> GetSubscribersCount(Guid planId);
         Task<string?> CreatePlan(CreatePlanHeaderDto dto);
-        Task<WorkoutPlan?> GetPlanById(Guid planId);
+        Task<WorkoutPlanBriefDto?> GetPlanById(Guid planId);
+        Task<List<WorkoutPlanBriefDto>> GetPlansByCoachIdsAsync(List<Guid> coachIds, Guid traineeId);
+
     }
 }
